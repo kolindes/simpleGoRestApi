@@ -11,7 +11,7 @@ import (
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var response models.Response
+	response := models.NewResponse()
 
 	response.Message = "Unauthorized"
 
@@ -24,7 +24,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if credentials.Username == "" || credentials.Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		response.Error = "Invalid username or password"
+		response.Error = "Invalid username or password."
 		json.NewEncoder(w).Encode(response)
 		return
 	}

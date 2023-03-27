@@ -10,7 +10,7 @@ import (
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var response models.Response
+	response := models.NewResponse()
 
 	response.Message = "Not registered"
 
@@ -18,7 +18,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		response.Error = "Bad request: " + err.Error()
+		response.Error = "Bad request. <" + err.Error() + ">"
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -32,7 +32,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := user.SetPassword(user.Password); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		response.Error = "Internal error: " + err.Error()
+		response.Error = "Error. <" + err.Error() + ">"
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -41,7 +41,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		response.Error = "The user was not added to the database, error: " + err.Error()
+		response.Error = "The user was not added to the database, error: <" + err.Error() + ">"
 		json.NewEncoder(w).Encode(response)
 		return
 	}

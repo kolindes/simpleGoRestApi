@@ -8,7 +8,7 @@ import (
 )
 
 func PathNotFound(w http.ResponseWriter, _ *http.Request) {
-	var response models.Response
+	response := models.NewResponse()
 	response.Message = "Not found"
 	w.WriteHeader(http.StatusNotFound)
 	json.NewEncoder(w).Encode(response)

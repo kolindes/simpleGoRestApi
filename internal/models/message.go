@@ -9,3 +9,11 @@ type Response struct {
 	Error   string                 `json:"error"`
 	Message string                 `json:"message"`
 }
+
+func NewResponse() Response {
+	return Response{
+		Data:    make(map[string]interface{}),
+		Error:   "",
+		Message: "",
+	}
+}
