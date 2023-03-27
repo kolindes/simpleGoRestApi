@@ -41,7 +41,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if !user.CheckPassword(credentials.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
-		response.Error = err.Error()
+		response.Error = "Invalid credentials."
 		json.NewEncoder(w).Encode(response)
 		return
 	}
