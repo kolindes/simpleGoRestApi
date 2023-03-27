@@ -20,6 +20,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&credentials); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response.Error = err.Error()
+		json.NewEncoder(w).Encode(response)
+		return
 	}
 
 	if credentials.Username == "" || credentials.Password == "" {
