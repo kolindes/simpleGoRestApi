@@ -15,7 +15,7 @@ func main() {
 	}
 	defer db.Close()
 
-	http.HandleFunc("/", handlers.HelloHandler)
+	http.HandleFunc("/", handlers.PathNotFound)
 	http.HandleFunc("/register", handlers.RegisterHandler)
 	http.HandleFunc("/login", handlers.LoginHandler)
 
