@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/kolindes/simpleRestApi/internal/database"
+	"github.com/kolindes/simpleRestApi/internal/error"
 	"github.com/kolindes/simpleRestApi/internal/models"
 )
 
@@ -12,27 +13,27 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	response := models.NewResponse()
 
-	response.Message = "Not registered"
+	response.Message = error.NotRegistered
 
 	var user models.User
 
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		response.Error = "Bad request. <" + err.Error() + ">"
+		response.Error = error.BadRequest
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
 	if user.Username == "" || user.Password == "" || user.Email == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		response.Error = "Username, password and Email are required."
+		response.Error = error.InvalidRegisterCredentials
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
 	if err := user.SetPassword(user.Password); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		response.Error = "Error. <" + err.Error() + ">"
+		response.Error = error.InternalServerError
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -41,7 +42,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		response.Error = "The user was not added to the database, error: <" + err.Error() + ">"
+		response.Error = error.InternalServerError
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -49,7 +50,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	token, err := generateToken(user.ID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		response.Error = err.Error()
+		response.Error = error.InternalServerError
 		json.NewEncoder(w).Encode(response)
 		return
 	}
