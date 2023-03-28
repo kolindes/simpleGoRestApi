@@ -38,6 +38,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// gorm database add user
 	err := database.AddUser(user.Username, user.Email, user.HashedPassword)
 
 	if err != nil {

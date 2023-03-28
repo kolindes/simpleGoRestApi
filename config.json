@@ -1,1 +1,18 @@
-{"main":{"host":"0.0.0.0","port":"3000"},"db":{"engine":"sqlite3","host":"","port":"","user":"","password":"","name":""},"jwt":{"secret":"secret","expires_in_hours":1}}
+{
+    "main": {
+        "host": "0.0.0.0",
+        "port": "3000"
+    },
+    "db": {
+        "engine": "sqlite3",
+        "host": "",
+        "port": "",
+        "user": "",
+        "password": "",
+        "name": ""
+    },
+    "jwt": {
+        "secret": "secret",
+        "expires_in_hours": 1
+    }
+}

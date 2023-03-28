@@ -24,10 +24,16 @@ type JWTConfig struct {
 	ExpiresInHours int64  `json:"expires_in_hours"`
 }
 
+type Logging struct {
+	Level  string `json:"level"`
+	Output string `json:"output"`
+}
+
 type Config struct {
-	Main MainConfig `json:"main"`
-	DB   DBConfig   `json:"db"`
-	JWT  JWTConfig  `json:"jwt"`
+	Main    MainConfig `json:"main"`
+	DB      DBConfig   `json:"db"`
+	JWT     JWTConfig  `json:"jwt"`
+	Logging Logging    `json:"logging"`
 }
 
 func Load() (*Config, error) {
@@ -46,6 +52,10 @@ func Load() (*Config, error) {
 				JWT: JWTConfig{
 					SecretKey:      "secret",
 					ExpiresInHours: 1,
+				},
+				Logging: Logging{
+					Level:  "debug",
+					Output: "stdout",
 				},
 			}
 			err := Write(defaultConfig)
