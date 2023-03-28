@@ -5,8 +5,10 @@ import (
 	"net/http"
 
 	"github.com/kolindes/simpleRestApi/internal/config"
-	"github.com/kolindes/simpleRestApi/internal/database"
 	"github.com/kolindes/simpleRestApi/internal/handlers"
+	"github.com/kolindes/simpleRestApi/internal/models"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -15,12 +17,27 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// sqlite for a while.
-	db, err := database.InitDB()
+	var db *gorm.DB
+	dialect := sqlite.Open("./data.db")
+
+	// Connect to the database using GORM
+	db, err = gorm.Open(dialect, &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
+
+	// Auto-migrate the User model
+	err = db.AutoMigrate(&models.User{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Close the database connection when the function returns
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer sqlDB.Close()
 
 	http.HandleFunc("/", handlers.PathNotFound)
 	http.HandleFunc("/register", handlers.RegisterHandler)

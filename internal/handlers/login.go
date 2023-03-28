@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/kolindes/simpleRestApi/internal/database"
-	"github.com/kolindes/simpleRestApi/internal/error"
 	"github.com/kolindes/simpleRestApi/internal/models"
+	"github.com/kolindes/simpleRestApi/internal/svcerr"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +14,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	response := models.NewResponse()
 
-	response.Message = error.Unauthorized
+	response.Message = svcerr.Unauthorized
 
 	var credentials models.Credentials
 
@@ -27,7 +27,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if credentials.Username == "" || credentials.Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		response.Error = error.InvalidCredentials
+		response.Error = svcerr.InvalidCredentials
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -35,14 +35,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	user, err := database.GetUserByUsername(credentials.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		response.Error = error.InvalidCredentials
+		response.Error = svcerr.InvalidCredentials
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
 	if !user.CheckPassword(credentials.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
-		response.Error = error.InvalidCredentials
+		response.Error = svcerr.InvalidCredentials
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -50,14 +50,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	token, err := generateToken(user.ID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		response.Error = error.InvalidAuthentication
+		response.Error = svcerr.InvalidAuthentication
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
 	w.Header().Set("Authorization", "Bearer "+token)
 	w.WriteHeader(http.StatusOK)
-	response.Message = "Authorized"
+	response.Message = "authorized"
 	response.Data["access_token"] = token
 	json.NewEncoder(w).Encode(response)
 }

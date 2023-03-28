@@ -11,6 +11,7 @@ type MainConfig struct {
 }
 
 type DBConfig struct {
+	Engine   string `json:"engine"`
 	Host     string `json:"host"`
 	Port     string `json:"port"`
 	User     string `json:"user"`
@@ -18,9 +19,15 @@ type DBConfig struct {
 	Name     string `json:"name"`
 }
 
+type JWTConfig struct {
+	SecretKey      string `json:"secret"`
+	ExpiresInHours int64  `json:"expires_in_hours"`
+}
+
 type Config struct {
 	Main MainConfig `json:"main"`
 	DB   DBConfig   `json:"db"`
+	JWT  JWTConfig  `json:"jwt"`
 }
 
 func Load() (*Config, error) {
@@ -34,14 +41,13 @@ func Load() (*Config, error) {
 					Port: "3000",
 				},
 				DB: DBConfig{
-					Host:     "0.0.0.0",
-					Port:     "5432",
-					User:     "user",
-					Password: "password",
-					Name:     "dbname",
+					Engine: "sqlite3",
+				},
+				JWT: JWTConfig{
+					SecretKey:      "secret",
+					ExpiresInHours: 1,
 				},
 			}
-
 			err := Write(defaultConfig)
 			if err != nil {
 				return nil, err

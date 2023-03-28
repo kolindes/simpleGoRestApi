@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/kolindes/simpleRestApi/internal/models"
+	"github.com/kolindes/simpleRestApi/internal/svcerr"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -43,6 +44,10 @@ func AddUser(username string, email string, password []byte) error {
 
 	if err != nil {
 		return err
+	}
+
+	if _, err = GetUserByUsername(username); err == nil {
+		return errors.New(svcerr.UserAlreadyExists)
 	}
 
 	_, err = db.Exec("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", username, email, password)
