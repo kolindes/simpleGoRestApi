@@ -1,0 +1,13 @@
+{
+    "main": {
+        "host": "0.0.0.0",
+        "port": "3000"
+    },
+    "db": {
+        "host": "0.0.0.0",
+        "port": "5432",
+        "user": "user",
+        "password": "password",
+        "name": "dbname"
+    }
+}
