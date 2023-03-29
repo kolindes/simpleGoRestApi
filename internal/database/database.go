@@ -3,16 +3,21 @@ package database
 import (
 	"errors"
 
+	"github.com/kolindes/simpleRestApi/internal/config"
 	"github.com/kolindes/simpleRestApi/internal/models"
 	"github.com/kolindes/simpleRestApi/internal/svcerr"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
 
-func InitDB(dialector gorm.Dialector) error {
+func InitDB(config config.DBConfig) error {
+	dialect := sqlite.Open("./data.db")
+
 	var err error
-	db, err = gorm.Open(dialector, &gorm.Config{})
+
+	db, err = gorm.Open(dialect, &gorm.Config{})
 	if err != nil {
 		return err
 	}
@@ -22,6 +27,14 @@ func InitDB(dialector gorm.Dialector) error {
 	if err != nil {
 		return err
 	}
+
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+	// defer sqlDB.Close()
+	sqlDB.SetMaxOpenConns(config.MaxOpenConns)
+	sqlDB.SetMaxIdleConns(config.MaxIdleConns)
 
 	return nil
 }

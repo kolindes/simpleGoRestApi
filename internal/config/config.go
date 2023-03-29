@@ -11,12 +11,9 @@ type MainConfig struct {
 }
 
 type DBConfig struct {
-	Engine   string `json:"engine"`
-	Host     string `json:"host"`
-	Port     string `json:"port"`
-	User     string `json:"user"`
-	Password string `json:"password"`
-	Name     string `json:"name"`
+	Engine       string `json:"engine"`
+	MaxOpenConns int    `json:"max_open_conns"`
+	MaxIdleConns int    `json:"max_idle_conns"`
 }
 
 type JWTConfig struct {
@@ -24,16 +21,16 @@ type JWTConfig struct {
 	ExpiresInHours int64  `json:"expires_in_hours"`
 }
 
-type Logging struct {
-	Level  string `json:"level"`
-	Output string `json:"output"`
+type LoggingConfig struct {
+	Colorful bool
+	LogLevel int
 }
 
 type Config struct {
-	Main    MainConfig `json:"main"`
-	DB      DBConfig   `json:"db"`
-	JWT     JWTConfig  `json:"jwt"`
-	Logging Logging    `json:"logging"`
+	Main          MainConfig    `json:"main"`
+	DB            DBConfig      `json:"db"`
+	JWT           JWTConfig     `json:"jwt"`
+	LoggingConfig LoggingConfig `json:"logging"`
 }
 
 func Load() (*Config, error) {
@@ -47,15 +44,17 @@ func Load() (*Config, error) {
 					Port: "3000",
 				},
 				DB: DBConfig{
-					Engine: "sqlite3",
+					Engine:       "sqlite3",
+					MaxOpenConns: 100,
+					MaxIdleConns: 1000,
 				},
 				JWT: JWTConfig{
 					SecretKey:      "secret",
 					ExpiresInHours: 1,
 				},
-				Logging: Logging{
-					Level:  "debug",
-					Output: "stdout",
+				LoggingConfig: LoggingConfig{
+					Colorful: false,
+					LogLevel: 1,
 				},
 			}
 			err := Write(defaultConfig)
